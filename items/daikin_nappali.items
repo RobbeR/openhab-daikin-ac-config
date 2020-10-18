@@ -1,0 +1,12 @@
+Switch DaikinACUnit_Power                "Power"                                                 { channel="daikin:ac_unit:192_168_0_121:power" }
+Number DaikinACUnit_SetPoint             "SetPoint"                                    { channel="daikin:ac_unit:192_168_0_121:settemp" }
+String DaikinACUnit_Mode                 "Mode"                 <ac_mode>                          { channel="daikin:ac_unit:192_168_0_121:mode" }
+String DaikinACUnit_Fan                  "Fan"              <fan>                              { channel="daikin:ac_unit:192_168_0_121:fanspeed" }
+Number DaikinACUnit_IndoorTemperatureF   "IndoorTemp"                                         { channel="daikin:ac_unit:192_168_0_121:indoortemp" }
+Number DaikinACUnit_OutdoorTemperatureF  "OutdoorTemp"               [ "CurrentTemperature" ] { channel="daikin:ac_unit:192_168_0_121:outdoortemp" }
+
+Group gLivingRoomThermostat "Living Room Thermostat" [ "Thermostat" ]
+Number ThermostatCurrentTemp "Current temp" (gLivingRoomThermostat) [ "CurrentTemperature" ]
+Number ThermostatTargetTemperature "Target temp" (gLivingRoomThermostat) [ "homekit:TargetTemperature" ]
+String ThermostatHeatingCoolingMode (gLivingRoomThermostat) [ "homekit:TargetHeatingCoolingMode" ]
+String ThermostatHeatingCoolingCurMode (gLivingRoomThermostat) [ "homekit:CurrentHeatingCoolingMode" ]
