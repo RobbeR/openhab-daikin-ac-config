@@ -1,0 +1,201 @@
+rule "ThermostatLR-Power"
+when
+  Item DaikinACUnitLR_Power changed or
+  Item DaikinACUnitLR_Mode changed
+then
+  logInfo("Thermostat Zal", "openHAB Power. Info. Status: " + DaikinACUnitLR_Power.state.toString);
+  logInfo("Thermostat Zal", "openHAB Power. Info. Mode openHAB: " + DaikinACUnitLR_Mode.state.toString);
+  logInfo("Thermostat Zal", "openHAB Power. Info. Mode HomeKit: " + ThermostatHeatingCoolingModeLR.state.toString);
+  
+  if (DaikinACUnitLR_Power.state.toString == "ON") {
+    if (DaikinACUnitLR_Mode.state.toString == "AUTO") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "Auto") {
+        ThermostatHeatingCoolingModeLR.sendCommand("Auto");
+        logInfo("Thermostat Zal", "openHAB Power. Set mode HomeKit: Auto");
+      }
+    }
+      
+    if (DaikinACUnitLR_Mode.state.toString == "COLD") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "CoolOn") {
+        ThermostatHeatingCoolingModeLR.sendCommand("CoolOn");
+        logInfo("Thermostat Zal", "openHAB Power. Set mode HomeKit: CoolOn");
+      }
+    }
+   
+    if (DaikinACUnitLR_Mode.state.toString == "HEAT") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "HeatOn") {
+        ThermostatHeatingCoolingModeLR.sendCommand("HeatOn");
+        logInfo("Thermostat Zal", "openHAB Power. Set mode HomeKit: HeatOn");
+      }
+    }
+   
+    if (DaikinACUnitLR_Mode.state.toString == "DEHUMIDIFIER") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "Auto") {
+        ThermostatHeatingCoolingModeLR.sendCommand("Auto");
+        logInfo("Thermostat Zal", "openHAB Power. Set mode HomeKit: Auto");
+      }
+    }
+      
+    if (DaikinACUnitLR_Mode.state.toString == "FAN") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "Auto") {
+        ThermostatHeatingCoolingModeLR.sendCommand("Auto");
+        logInfo("Thermostat Zal", "openHAB Power. Set mode HomeKit: Auto");
+      }
+    }
+  }
+    
+  if (DaikinACUnitLR_Power.state.toString == "OFF") {
+    if (ThermostatHeatingCoolingModeLR.state.toString != "OFF") { 
+      ThermostatHeatingCoolingModeLR.sendCommand("Off");
+      logInfo("Thermostat Zal", "openHAB Power. Set mode HomeKit: Off");
+    }
+  }
+end
+
+rule "ThermostatLR-AppleMode"
+when
+  Item ThermostatHeatingCoolingModeLR changed 
+then
+  logInfo("Thermostat Zal", "Apple change mode. Info. Status: " + ThermostatHeatingCoolingModeLR.state.toString);
+  logInfo("Thermostat Zal", "Apple change mode. Info. Mode power openHAB: " + DaikinACUnitLR_Power.state.toString);
+  logInfo("Thermostat Zal", "Apple change mode. Info. Mode openHAB: " + DaikinACUnitLR_Mode.state.toString);
+  
+  if (ThermostatHeatingCoolingModeLR.state.toString == "Off") {
+    ThermostatHeatingCoolingCurModeLR.sendCommand("Off");
+    if (DaikinACUnitLR_Power.state.toString != "OFF") {
+      DaikinACUnitLR_Power.sendCommand("OFF");
+      logInfo("Thermostat Zal", "Apple change mode. Set power openHAB: OFF");
+    }
+  }
+  
+  if (ThermostatHeatingCoolingModeLR.state.toString == "Auto") {
+    ThermostatHeatingCoolingCurModeLR.sendCommand("CoolOn");
+    if (DaikinACUnitLR_Power.state.toString != "ON") {
+      DaikinACUnitLR_Power.sendCommand("ON");
+      logInfo("Thermostat Zal", "Apple change mode. Set power openHAB: ON");
+    }
+    if (DaikinACUnitLR_Mode.state.toString != "AUTO" && DaikinACUnitLR_Mode.state.toString != "DEHUMIDIFIER" && DaikinACUnitLR_Mode.state.toString != "FAN") {
+      DaikinACUnitLR_Mode.sendCommand("AUTO");
+      logInfo("Thermostat Zal", "Apple change mode. Set mode openHAB: AUTO");
+    }
+  }
+    
+  if (ThermostatHeatingCoolingModeLR.state.toString == "HeatOn") {
+    ThermostatHeatingCoolingCurModeLR.sendCommand("HeatOn");
+    if (DaikinACUnitLR_Power.state.toString != "ON") {
+      DaikinACUnitLR_Power.sendCommand("ON");
+      logInfo("Thermostat Zal", "Apple change mode. Set power openHAB: ON");
+    }
+    if (DaikinACUnitLR_Mode.state.toString != "HEAT") {
+      DaikinACUnitLR_Mode.sendCommand("HEAT");
+      logInfo("Thermostat Zal", "Apple change mode. Set mode openHAB: HEAT");
+    }
+  }
+  
+  if (ThermostatHeatingCoolingModeLR.state.toString == "CoolOn") {
+    ThermostatHeatingCoolingCurModeLR.sendCommand("CoolOn");
+    if (DaikinACUnitLR_Power.state.toString != "ON") {
+      DaikinACUnitLR_Power.sendCommand("ON");
+      logInfo("Thermostat Zal", "Apple change mode. Set power openHAB: ON");
+    }
+    if (DaikinACUnitLR_Mode.state.toString != "COLD") {
+      DaikinACUnitLR_Mode.sendCommand("COLD");
+      logInfo("Thermostat Zal", "Apple change mode. Set mode openHAB: COLD");
+    }
+  }
+end
+
+rule "ThermostatLR-InTemp"
+when
+    Item DaikinACUnitLR_IndoorTemperatureF changed 
+then
+  logInfo("Thermostat Zal", "openHAB set temp in room. Info. Temp: " + DaikinACUnitLR_IndoorTemperatureF.state.toString);
+  ThermostatCurrentTempLR.sendCommand(DaikinACUnitLR_IndoorTemperatureF.state.toString);
+end
+
+rule "ThermostatLR-Temp"
+when
+  Item DaikinACUnitLR_SetPoint changed 
+then
+  logInfo("Thermostat Zal", "openHAB set temp. Info. Temp: " + DaikinACUnitLR_SetPoint.state.toString);
+  logInfo("Thermostat Zal", "openHAB set temp. Info. Apple Temp: " + ThermostatTargetTemperatureLR.state.toString);
+  
+  if (DaikinACUnitLR_SetPoint.state != ThermostatTargetTemperatureLR.state) {
+    ThermostatTargetTemperatureLR.sendCommand(DaikinACUnitLR_SetPoint.state.toString);
+    logInfo("Thermostat Zal", "openHAB set temp. New Apple Temp: " + DaikinACUnitLR_SetPoint.state.toString);
+  }
+end
+
+rule "ThermostatLR-AppleTemp"
+when
+  Item ThermostatTargetTemperatureLR changed 
+then
+  logInfo("Thermostat Zal", "Apple set temp. Info. Temp: " + ThermostatTargetTemperatureLR.state.toString);
+  logInfo("Thermostat Zal", "Apple set temp. Info. openHAB Temp: " + DaikinACUnitLR_SetPoint.state.toString);
+
+  if (ThermostatTargetTemperatureLR.state != DaikinACUnitLR_SetPoint.state) {
+    DaikinACUnitLR_SetPoint.sendCommand(ThermostatTargetTemperatureLR.state.toString);
+    logInfo("Thermostat Zal", "Apple set temp. New openHAB Temp: " + ThermostatTargetTemperatureLR.state.toString);
+  }
+end
+
+rule "ThermostatLR-Start"
+when
+  System started
+then
+  logInfo("Thermostat Zal", "Boot set params. Info. Status openHAB: " + DaikinACUnitLR_Power.state.toString);
+  logInfo("Thermostat Zal", "Boot set params. Info. Mode openHAB: " + DaikinACUnitLR_Mode.state.toString);
+  logInfo("Thermostat Zal", "Boot set params. Info. Set Temp openHAB: " + DaikinACUnitLR_SetPoint.state.toString);
+  logInfo("Thermostat Zal", "Boot set params. Info. Inroom Temp openHAB: " + DaikinACUnitLR_IndoorTemperatureF.state.toString);
+  
+  if (DaikinACUnitLR_Power.state.toString == "ON") {
+    if (DaikinACUnitLR_Mode.state.toString == "AUTO") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "Auto") {
+        ThermostatHeatingCoolingModeLR.sendCommand("Auto");
+        logInfo("Thermostat Zal", "Boot set params. Set mode HomeKit: Auto");
+      }
+    }
+      
+    if (DaikinACUnitLR_Mode.state.toString == "COLD") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "CoolOn") {
+        ThermostatHeatingCoolingModeLR.sendCommand("CoolOn");
+        logInfo("Thermostat Zal", "Boot set params. Set mode HomeKit: CoolOn");
+      }
+    }
+   
+    if (DaikinACUnitLR_Mode.state.toString == "HEAT") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "HeatOn") {
+        ThermostatHeatingCoolingModeLR.sendCommand("HeatOn");
+        logInfo("Thermostat Zal", "Boot set params. Set mode HomeKit: HeatOn");
+      }
+    }
+   
+    if (DaikinACUnitLR_Mode.state.toString == "DEHUMIDIFIER") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "Auto") {
+        ThermostatHeatingCoolingModeLR.sendCommand("Auto");
+        logInfo("Thermostat Zal", "Boot set params. Set mode HomeKit: Auto");
+      }
+    }
+      
+    if (DaikinACUnitLR_Mode.state.toString == "FAN") {
+      if (ThermostatHeatingCoolingModeLR.state.toString != "Auto") {
+        ThermostatHeatingCoolingModeLR.sendCommand("Auto");
+        logInfo("Thermostat Zal", "Boot set params. Set mode HomeKit: Auto");
+      }
+    }
+  }
+    
+  if (DaikinACUnitLR_Power.state.toString == "OFF") {
+    if (ThermostatHeatingCoolingModeLR.state.toString != "OFF") { 
+      ThermostatHeatingCoolingModeLR.sendCommand("Off");
+      logInfo("Thermostat Zal", "Boot set params. Set mode HomeKit: Off");
+    }
+  }
+  
+  ThermostatCurrentTempLR.sendCommand(DaikinACUnitLR_IndoorTemperatureF.state.toString);
+  
+  if (DaikinACUnitLR_SetPoint.state != ThermostatTargetTemperatureLR.state) {
+    ThermostatTargetTemperatureLR.sendCommand(DaikinACUnitLR_SetPoint.state.toString);
+    logInfo("Thermostat Zal", "Boot set params. New Apple Temp: " + DaikinACUnitLR_SetPoint.state.toString);
+  }
+end

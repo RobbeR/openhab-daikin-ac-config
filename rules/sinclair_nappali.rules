@@ -1,0 +1,208 @@
+rule "ThermostatLRSinclair-Power"
+when
+    Item SinclairACUnitLR_Power changed or
+    Item SinclairACUnitLR_Mode changed
+then
+    logInfo("Thermostat Sinclair", "openHAB Power. Info. Status: " + SinclairACUnitLR_Power.state.toString);
+    logInfo("Thermostat Sinclair", "openHAB Power. Info. Mode openHAB: " + SinclairACUnitLR_Mode.state.toString);
+    logInfo("Thermostat Sinclair", "openHAB Power. Info. Mode HomeKit: " + ThermostatSinclairHeatingCoolingModeLR.state.toString);
+
+  if (SinclairACUnitLR_Power.state.toString == "ON") {
+      if (SinclairACUnitLR_Mode.state.toString == "0") { // auto
+          if (ThermostatSinclairHeatingCoolingModeLR.state.toString != "Auto") {
+              ThermostatSinclairHeatingCoolingModeLR.sendCommand("Auto");
+              logInfo("Thermostat Sinclair", "openHAB Power. Set mode HomeKit: Auto");
+          }
+      }
+
+      if (SinclairACUnitLR_Mode.state.toString == "1") { // cool
+          if (ThermostatSinclairHeatingCoolingModeLR.state.toString != "CoolOn") {
+              ThermostatSinclairHeatingCoolingModeLR.sendCommand("CoolOn");
+              logInfo("Thermostat Sinclair", "openHAB Power. Set mode HomeKit: CoolOn");
+          }
+      }
+
+      if (SinclairACUnitLR_Mode.state.toString == "2") { // dry
+          logInfo("Thermostat Sinclair", "openHAB Power. Dry mode is not supported...");  
+      }
+
+      if (SinclairACUnitLR_Mode.state.toString == "3") { // fan
+          logInfo("Thermostat Sinclair", "openHAB Power. Fan mode is not supported...");  
+      }
+
+      if (SinclairACUnitLR_Mode.state.toString == "4") { // heating
+          ThermostatSinclairHeatingCoolingModeLR.sendCommand("HeatOn");
+          logInfo("Thermostat Sinclair", "openHAB Power. Set mode HomeKit: HeatOn");
+      }
+  }
+  
+end
+
+
+
+
+
+
+
+
+
+rule "ThermostatLRSinclair-AppleMode"
+when
+  Item ThermostatSinclairHeatingCoolingModeLR changed 
+then
+  logInfo("Thermostat Sinclair", "Apple change mode. Info. Status: " + ThermostatSinclairHeatingCoolingModeLR.state.toString);
+  logInfo("Thermostat Sinclair", "Apple change mode. Info. Mode power openHAB: " + SinclairACUnitLR_Power.state.toString);
+  logInfo("Thermostat Sinclair", "Apple change mode. Info. Mode openHAB: " + SinclairACUnitLR_Mode.state.toString);
+  
+  if (ThermostatSinclairHeatingCoolingModeLR.state.toString == "Off") {
+    ThermostatSinclairHeatingCoolingCurModeLR.sendCommand("Off");
+    if (SinclairACUnitLR_Power.state.toString != "OFF") {
+      SinclairACUnitLR_Power.sendCommand("OFF");
+      logInfo("Thermostat Sinclair", "Apple change mode. Set power openHAB: OFF");
+    }
+  }
+  
+  if (ThermostatSinclairHeatingCoolingModeLR.state.toString == "Auto") { // AUTO
+    ThermostatSinclairHeatingCoolingCurModeLR.sendCommand("Auto");
+    if (SinclairACUnitLR_Power.state.toString != "ON") {
+      SinclairACUnitLR_Power.sendCommand("ON");
+      logInfo("Thermostat Sinclair", "Apple change mode. Set power openHAB: ON");
+    }
+
+    if (SinclairACUnitLR_Mode.state.toString != "0") {
+      SinclairACUnitLR_Mode.sendCommand("0");
+      logInfo("Thermostat Sinclair", "Apple change mode. Set mode openHAB: AUTO");
+    }
+  }
+    
+  if (ThermostatSinclairHeatingCoolingModeLR.state.toString == "HeatOn") { // AUTO
+    ThermostatSinclairHeatingCoolingCurModeLR.sendCommand("HeatOn");
+    if (SinclairACUnitLR_Power.state.toString != "ON") {
+      SinclairACUnitLR_Power.sendCommand("ON");
+      logInfo("Thermostat Sinclair", "Apple change mode. Set power openHAB: ON");
+    }
+
+    if (SinclairACUnitLR_Mode.state.toString != "4") {
+      SinclairACUnitLR_Mode.sendCommand("4");
+      logInfo("Thermostat Sinclair", "Apple change mode. Set mode openHAB: HeatOn");
+    }
+  }
+  
+  if (ThermostatSinclairHeatingCoolingModeLR.state.toString == "CoolOn") { // Cool
+    ThermostatSinclairHeatingCoolingCurModeLR.sendCommand("CoolOn");
+    if (SinclairACUnitLR_Power.state.toString != "ON") {
+      SinclairACUnitLR_Power.sendCommand("ON");
+      logInfo("Thermostat Sinclair", "Apple change mode. Set power openHAB: ON");
+    }
+
+    if (SinclairACUnitLR_Mode.state.toString != "1") {
+      SinclairACUnitLR_Mode.sendCommand("1");
+      logInfo("Thermostat Sinclair", "Apple change mode. Set mode openHAB: CoolOn");
+    }
+  }
+end
+
+
+
+
+
+
+
+
+rule "ThermostatLRSinclair-InTemp" // current temp
+when
+    Item SinclairACUnitLR_IndoorTemperatureF changed 
+then
+  logInfo("Thermostat Sinclair", "openHAB current temp in room. Info. Temp: " + SinclairACUnitLR_IndoorTemperatureF.state.toString);
+  logInfo("Thermostat Sinclair DEBUG", "openHAB current temp in room. Info. Temp: " + SinclairACUnitLR_IndoorTemperatureF.state);
+  ThermostatSinclairCurrentTempLR.sendCommand(SinclairACUnitLR_IndoorTemperatureF.state.toString);
+end
+
+
+
+
+
+
+
+rule "ThermostatLRSinclair-Temp" // target temp
+when
+  Item SinclairACUnitLR_SetPoint changed 
+then
+  logInfo("Thermostat Sinclair", "openHAB set temp. Info. Temp: " + SinclairACUnitLR_SetPoint.state.toString);
+  logInfo("Thermostat Sinclair", "openHAB set temp. Info. Apple Temp: " + ThermostatSinclairTargetTemperatureLR.state.toString);
+  
+  if (SinclairACUnitLR_SetPoint.state != ThermostatSinclairTargetTemperatureLR.state) {
+    ThermostatSinclairTargetTemperatureLR.sendCommand(SinclairACUnitLR_SetPoint.state.toString);
+    logInfo("Thermostat Sinclair", "openHAB set temp. New Apple Temp: " + SinclairACUnitLR_SetPoint.state.toString);
+  }
+end
+
+
+
+
+
+
+rule "ThermostatLRSinclair-AppleTemp"
+when
+  Item ThermostatSinclairTargetTemperatureLR changed 
+then
+  logInfo("Thermostat Sinclair", "Apple set temp. Info. Temp: " + ThermostatSinclairTargetTemperatureLR.state.toString);
+  logInfo("Thermostat Sinclair", "Apple set temp. Info. openHAB Temp: " + SinclairACUnitLR_SetPoint.state.toString);
+
+  if (ThermostatSinclairTargetTemperatureLR.state != SinclairACUnitLR_SetPoint.state) {
+    SinclairACUnitLR_SetPoint.sendCommand(ThermostatSinclairTargetTemperatureLR.state.toString);
+    logInfo("Thermostat Sinclair", "Apple set temp. New openHAB Temp: " + ThermostatSinclairTargetTemperatureLR.state.toString);
+  }
+end
+
+
+
+
+
+
+rule "ThermostatLRSinclair-Start"
+when
+  System started
+then
+  logInfo("Thermostat Sinclair", "Boot set params. Info. Status openHAB: " + SinclairACUnitLR_Power.state.toString);
+  logInfo("Thermostat Sinclair", "Boot set params. Info. Mode openHAB: " + SinclairACUnitLR_Mode.state.toString);
+  logInfo("Thermostat Sinclair", "Boot set params. Info. Set Temp openHAB: " + SinclairACUnitLR_SetPoint.state.toString);
+  logInfo("Thermostat Sinclair", "Boot set params. Info. Inroom Temp openHAB: " + SinclairACUnitLR_IndoorTemperatureF.state.toString);
+  
+  if (SinclairACUnitLR_Power.state.toString == "ON") {
+    if (SinclairACUnitLR_Mode.state.toString == "0") {
+      if (ThermostatSinclairHeatingCoolingModeLR.state.toString != "Auto") {
+        ThermostatSinclairHeatingCoolingModeLR.sendCommand("Auto");
+        logInfo("Thermostat Sinclair", "Boot set params. Set mode HomeKit: Auto");
+      }
+    }
+      
+    if (SinclairACUnitLR_Mode.state.toString == "1") {
+      if (ThermostatSinclairHeatingCoolingModeLR.state.toString != "CoolOn") {
+        ThermostatSinclairHeatingCoolingModeLR.sendCommand("CoolOn");
+        logInfo("Thermostat Sinclair", "Boot set params. Set mode HomeKit: CoolOn");
+      }
+    }
+   
+    if (SinclairACUnitLR_Mode.state.toString == "4") {
+      if (ThermostatSinclairHeatingCoolingModeLR.state.toString != "HeatOn") {
+        ThermostatSinclairHeatingCoolingModeLR.sendCommand("HeatOn");
+        logInfo("Thermostat Sinclair", "Boot set params. Set mode HomeKit: HeatOn");
+      }
+    }
+  }
+    
+  if (SinclairACUnitLR_Power.state.toString == "OFF") {
+    if (ThermostatSinclairHeatingCoolingModeLR.state.toString != "OFF") { 
+      ThermostatSinclairHeatingCoolingModeLR.sendCommand("Off");
+      logInfo("Thermostat Sinclair", "Boot set params. Set mode HomeKit: Off");
+    }
+  }
+  
+  ThermostatSinclairCurrentTempLR.sendCommand(SinclairACUnitLR_IndoorTemperatureF.state.toString);
+  
+  if (SinclairACUnitLR_SetPoint.state != ThermostatSinclairTargetTemperatureLR.state) {
+    ThermostatSinclairTargetTemperatureLR.sendCommand(SinclairACUnitLR_SetPoint.state.toString);
+    logInfo("Thermostat Sinclair", "Boot set params. New Apple Temp: " + SinclairACUnitLR_SetPoint.state.toString);
+  }
+end

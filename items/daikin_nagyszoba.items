@@ -1,12 +1,12 @@
-Switch DaikinACUnit_Power                "Power"                                                 { channel="daikin:ac_unit:192_168_0_120:power" }
-Number DaikinACUnit_SetPoint             "SetPoint"                                    { channel="daikin:ac_unit:192_168_0_120:settemp" }
-String DaikinACUnit_Mode                 "Mode"                 <ac_mode>                          { channel="daikin:ac_unit:192_168_0_120:mode" }
-String DaikinACUnit_Fan                  "Fan"              <fan>                              { channel="daikin:ac_unit:192_168_0_120:fanspeed" }
-Number DaikinACUnit_IndoorTemperatureF   "IndoorTemp"                                         { channel="daikin:ac_unit:192_168_0_120:indoortemp" }
-Number DaikinACUnit_OutdoorTemperatureF  "OutdoorTemp"               [ "CurrentTemperature" ] { channel="daikin:ac_unit:192_168_0_120:outdoortemp" }
+Switch DaikinACUnitBR_Power                "Power"                                                 { channel="daikin:ac_unit:192_168_0_120:power" }
+Number DaikinACUnitBR_SetPoint             "SetPoint"                                    { channel="daikin:ac_unit:192_168_0_120:settemp" }
+String DaikinACUnitBR_Mode                 "Mode"                 <ac_mode>                          { channel="daikin:ac_unit:192_168_0_120:mode" }
+String DaikinACUnitBR_Fan                  "Fan"              <fan>                              { channel="daikin:ac_unit:192_168_0_120:fanspeed" }
+Number DaikinACUnitBR_IndoorTemperatureF   "IndoorTemp"                                         { channel="daikin:ac_unit:192_168_0_120:indoortemp" }
+Number DaikinACUnitBR_OutdoorTemperatureF  "OutdoorTemp"               [ "CurrentTemperature" ] { channel="daikin:ac_unit:192_168_0_120:outdoortemp" }
 
 Group gBigRoomThermostat "Big Room Thermostat" [ "Thermostat" ]
-Number ThermostatCurrentTemp "Current temp" (gBigRoomThermostat) [ "CurrentTemperature" ]
-Number ThermostatTargetTemperature "Target temp" (gBigRoomThermostat) [ "homekit:TargetTemperature" ]
-String ThermostatHeatingCoolingMode (gBigRoomThermostat) [ "homekit:TargetHeatingCoolingMode" ]
-String ThermostatHeatingCoolingCurMode (gBigRoomThermostat) [ "homekit:CurrentHeatingCoolingMode" ]
+Number ThermostatCurrentTempBR "Current temp" (gBigRoomThermostat) [ "CurrentTemperature" ]
+Number ThermostatTargetTemperatureBR "Target temp" (gBigRoomThermostat) [ "homekit:TargetTemperature" ]
+String ThermostatHeatingCoolingModeBR (gBigRoomThermostat) [ "homekit:TargetHeatingCoolingMode" ]
+String ThermostatHeatingCoolingCurModeBR (gBigRoomThermostat) [ "homekit:CurrentHeatingCoolingMode" ]

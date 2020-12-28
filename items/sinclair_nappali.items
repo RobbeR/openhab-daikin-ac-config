@@ -1,0 +1,11 @@
+Switch SinclairACUnitLR_Power                "Power"                                                 { channel="ewpesmart:EWPEAirCon:fea3b82c:power" }
+Number SinclairACUnitLR_Mode                 "Mode"                 <ac_mode>                          { channel="ewpesmart:EWPEAirCon:fea3b82c:mode" }
+Number SinclairACUnitLR_SetPoint             "temp"                                    { channel="ewpesmart:EWPEAirCon:fea3b82c:temp" }
+Number SinclairACUnitLR_IndoorTemperatureF   "tempSensor"                                         { channel="ewpesmart:EWPEAirCon:fea3b82c:tempSensor" }
+String SinclairACUnitLR_Fan                  "Fan"              <fan>                              { channel="ewpesmart:EWPEAirCon:fea3b82c:windSpeed" }
+
+Group gLivingRoomSinclairThermostat "Sinclair LR Thermostat" [ "Thermostat" ]
+Number ThermostatSinclairCurrentTempLR "Current temp" (gLivingRoomSinclairThermostat) [ "CurrentTemperature" ]
+Number ThermostatSinclairTargetTemperatureLR "Target temp" (gLivingRoomSinclairThermostat) [ "homekit:TargetTemperature" ]
+String ThermostatSinclairHeatingCoolingModeLR (gLivingRoomSinclairThermostat) [ "homekit:TargetHeatingCoolingMode" ]
+String ThermostatSinclairHeatingCoolingCurModeLR (gLivingRoomSinclairThermostat) [ "homekit:CurrentHeatingCoolingMode" ]
